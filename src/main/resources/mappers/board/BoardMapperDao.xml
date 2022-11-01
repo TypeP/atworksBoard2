@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.ant.board.dao.BoardMapperDao">
+
+	<select id="selectBoard" resultType="com.demo.ant.board.vo.BoardVO">
+		SELECT 
+			  BD_NUM 	AS	'bdNum'
+			, BD_TITLE 	AS	'bdTitle'
+			, BD_CONTENT	AS	'bdContent'
+			, BD_WRITER		AS	'bdWriter'
+			, BD_REGDATE		AS 'bdRegdate'
+			, BD_MODWRITER		AS 'bdModwriter'
+			, BD_MODDATE		AS 'bdModdate'
+			, BD_COUNT		AS 'bdCount'
+		FROM atworks_board
+		WHERE 1=1
+	</select>
+	
+	
+	
+	<insert id="insertBoard" parameterType="com.demo.ant.board.vo.BoardVO">
+		insert into atworks_board(
+			bd_num
+			,bd_title
+			,bd_content
+			,bd_writer
+			,bd_regdate
+			,bd_count
+		)
+		values(
+			(SELECT NEXTVAL(seq_board))
+			,#{bdTitle}
+			,#{bdContent}
+			,#{bdWriter}
+			,now()
+			,0
+		)
+	</insert>
+	
+	<select id="contentBoard" parameterType="int" resultType="com.demo.ant.board.vo.BoardVO">
+		SELECT 
+			  BD_NUM 	AS	'bdNum'
+			, BD_TITLE 	AS	'bdTitle'
+			, BD_CONTENT	AS	'bdContent'
+			, BD_WRITER		AS	'bdWriter'
+			, BD_REGDATE		AS 'bdRegdate'
+			, BD_MODWRITER		AS 'bdModwriter'
+			, BD_MODDATE		AS 'bdModdate'
+			, BD_COUNT		AS 'bdCount'
+		FROM atworks_board
+		WHERE 1=1
+		AND BD_NUM = #{bdNum}
+	
+	
+	</select>
+	
+	<update id="modifyBoard" parameterType="com.demo.ant.board.vo.BoardVO">
+		
+		update atworks_board 
+		       SET
+		       BD_TITLE = #{bdTitle}
+		       ,BD_CONTENT= #{bdContent}
+		       ,BD_MODWRITER=#{bdModwriter}
+		       ,BD_MODDATE=now()
+		where 1=1
+		AND BD_NUM= #{bdNum}
+				
+	
+	</update>
+	
+	<delete id="deleteBoard">
+		delete from atworks_board
+			where BD_NUM= #{bdNum}
+	</delete>
+	
+	<select id="searchBoard" parameterType="String" resultType="com.demo.ant.board.vo.BoardVO">
+		SELECT 
+			  BD_NUM 	AS	'bdNum'
+			, BD_TITLE 	AS	'bdTitle'
+			, BD_CONTENT	AS	'bdContent'
+			, BD_WRITER		AS	'bdWriter'
+			, BD_REGDATE		AS 'bdRegdate'
+			, BD_MODWRITER		AS 'bdModwriter'
+			, BD_MODDATE		AS 'bdModdate'
+			, BD_COUNT		AS 'bdCount'
+		FROM atworks_board
+		<choose>
+			<when test="field=='all'">
+			
+		WHERE 	BD_TITLE LIKE CONCAT('%', #{keyword}, '%')
+			OR BD_CONTENT LIKE CONCAT('%', #{keyword}, '%')
+			OR BD_WRITER LIKE CONCAT('%', #{keyword}, '%')
+			</when>
+			<otherwise>
+		WHERE 	${field} CONCAT('%', #{keyword}, '%')
+			</otherwise>
+			
+			</choose>
+			
+			
+	</select>
+	
+
+	
+</mapper>

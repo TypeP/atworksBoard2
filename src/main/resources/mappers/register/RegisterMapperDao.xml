@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.ant.register.dao.RegisterMapperDao">
+
+	<insert id="insertMember" parameterType="com.demo.ant.sample.vo.SampleVO">
+		insert into atworks_user  
+			 (
+		  USER_ID
+		, USER_NM 
+		, PASSWD
+		, NICK	
+		, EMAIL	
+		, PHONE	
+			)
+			
+			VALUES(
+				#{userId}
+				,#{userNm}
+				,#{passWd}
+				,#{nick}
+				,#{email}
+				,#{phone}
+			)
+			
+	</insert>
+	
+	<select id="selectMember" parameterType="com.demo.ant.sample.vo.SampleVO" resultType="com.demo.ant.sample.vo.SampleVO">
+		SELECT USER_ID AS 'userId'
+		
+		FROM atworks_user
+		where 1=1
+		  AND USER_ID =#{userId}
+		  AND PASSWD =#{passWd}
+	
+	</select>
+</mapper>
