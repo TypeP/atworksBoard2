@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.demo.ant.board.service.BoardService;
 import com.demo.ant.board.vo.BoardVO;
+import com.demo.ant.board.vo.ReplyVO;
 
 
 @Controller
@@ -65,15 +66,46 @@ public class BoardController {
 	public ModelAndView contentBoard(int bdNum,HttpServletRequest req) throws Exception {
 
 		BoardVO cont= boardService.contentBoard(bdNum);
-		
-		
+		List<ReplyVO> list= boardService.indexReply(bdNum);		
+		boardService.countBoard(cont);		
 		
 		ModelAndView mv = new ModelAndView();
+		mv.addObject("list", list);
 		mv.addObject("cont", cont);
 		
 		mv.setViewName("/board/content");
 		return mv;
 	};
+	
+	@PostMapping("/insertReply")
+	public ModelAndView insertReply(ReplyVO vo)throws Exception{
+		BoardVO cont= boardService.contentBoard(vo.getBdNum());
+		boardService.insertReply(vo);
+		
+		List<ReplyVO> list= boardService.indexReply(vo.getBdNum());	
+		
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("list", list);
+		mv.addObject("cont", cont);
+		
+		mv.setViewName("/board/content");
+		return mv;
+	}
+	
+	@GetMapping("/deleteReply")
+	public ModelAndView deleteReply(int bdNum,int rpNum) throws Exception{
+		BoardVO cont= boardService.contentBoard(bdNum);
+		boardService.deleteReply(rpNum);
+		
+		List<ReplyVO> list= boardService.indexReply(bdNum);	
+		
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("list", list);
+		mv.addObject("cont", cont);
+		
+		mv.setViewName("/board/content");
+		return mv;
+	}
 	
 	@GetMapping("/modifyBoard")
 	public ModelAndView modifyBoard(int bdNum,HttpServletRequest req) throws Exception {

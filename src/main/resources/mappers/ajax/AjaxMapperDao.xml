@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.ant.ajax.dao.AjaxMapperDao">
+
+	<select id="selectAjaxBoard" parameterType="map" resultType="com.demo.ant.board.vo.BoardVO">
+		SELECT 
+			  BD_NUM 	AS	'bdNum'
+			, BD_TITLE 	AS	'bdTitle'
+			, BD_CONTENT	AS	'bdContent'
+			, BD_WRITER		AS	'bdWriter'
+			, BD_REGDATE		AS 'bdRegdate'
+			, BD_MODWRITER		AS 'bdModwriter'
+			, BD_MODDATE		AS 'bdModdate'
+			, BD_COUNT		AS 'bdCount'
+		FROM atworks_board
+		<include refid="searchSql"/>
+		order by bdNum desc
+		limit #{pagePerCnt} OFFSET #{offset} 
+	</select>
+	
+	<update id="countAjax" parameterType="com.demo.ant.board.vo.BoardVO">
+		<selectKey resultType="int" keyProperty="bdCount" order="BEFORE">
+			select (bd_count)+1 from atworks_board where bd_num=#{bdNum}
+		</selectKey>
+		update atworks_board set
+			bd_count =#{bdCount}
+		where bd_type=2
+		and bd_num=#{bdNum}
+	
+	</update>
+	
+	<select id="getRepList" parameterType="int" resultType="com.demo.ant.board.vo.ReplyVO">
+		select
+			RP_NUM AS 'rpNum'
+			,BD_NUM AS 'bdNum'
+			,RP_ID AS 'rpID'
+			,RP_CONTENT AS 'rpContent'
+			,RP_DATE AS 'rpDate'
+		from atworks_reply
+		where bd_num=#{bdNum}
+		order by rp_num desc	
+	</select>
+
+	<select id="getAjaxTotalCnt" parameterType="com.demo.ant.ajax.vo.SearchVO" resultType="int">
+	   SELECT
+	   		COUNT(*)
+	   		FROM atworks_board
+	   		<include refid="searchSql"/>
+	   		
+	</select>
+	
+	<sql id="searchSql">
+		<where>		
+			<if test="searchType!=null or !searchType.equals('')">
+				<choose>
+					<when test="searchType!='all'">
+						${searchType} like CONCAT('%', #{keyword}, '%')
+						and bd_type=2
+					</when>
+					<when test="searchType='all'">
+						bd_title like CONCAT('%', #{keyword}, '%')
+						or bd_content like CONCAT('%', #{keyword}, '%')
+						or bd_writer like CONCAT('%', #{keyword}, '%')
+						and bd_type=2	
+					</when>
+							
+				</choose>
+
+			</if>
+		</where>
+	</sql>
+	
+	<insert id="insertReplyAjax" parameterType="com.demo.ant.board.vo.ReplyVO">
+		insert into atworks_reply(
+			rp_num,
+			bd_num,
+			rp_id,
+			rp_content,
+			rp_date
+		) values(
+			(SELECT NEXTVAL(seq_rep))
+			,#{bdNum}
+			,#{rpId}
+			,#{rpContent}
+			,now()
+		)
+		
+	
+	</insert>
+	
+	<insert id="insertAjaxBoard" parameterType="com.demo.ant.board.vo.BoardVO">
+		insert into atworks_board(
+			bd_num,
+			bd_type,
+			bd_title,
+			bd_content,
+			bd_writer,
+			bd_regdate,
+			bd_count
+		)
+		values(
+			(SELECT NEXTVAL(seq_board))
+			,2
+			,#{bdTitle}
+			,#{bdContent}
+			,#{bdWriter}
+			,now()
+			,0			
+			)
+
+	</insert>
+	
+	<select id="contentAjaxBoard" parameterType="int" resultType="com.demo.ant.board.vo.BoardVO">
+		select 
+			bd_num as bdNum
+			,bd_title as bdTitle
+			,bd_content as bdContent
+			,bd_writer as bdWriter
+			,bd_regdate as bdRegdate
+			,bd_modwriter as bdModwriter
+			,bd_moddate as bdModdate
+			,bd_count as bdCount
+			
+		from atworks_board
+		where bd_type =2
+		and bd_num=#{bdNum}
+	</select>
+	
+	<update id="modifyAjaxBoard" parameterType="com.demo.ant.board.vo.BoardVO">
+		update atworks_board set
+			bd_title =#{bdTitle}
+			,bd_content=#{bdContent}
+			,bd_modwriter=#{bdModwriter}
+			,bd_moddate=now()
+		where bd_type=2
+		and bd_num=#{bdNum}
+
+	</update>
+	<delete id="deleteReply">
+	delete from atworks_reply
+	where rp_num=#{rpNum}
+	</delete>
+	
+	
+	<delete id="deleteAjaxBoard" parameterType="int">
+	delete from atworks_board 
+	where bd_type=2
+	and bd_num=#{bdNum}
+	
+	</delete>
+
+	
+</mapper>

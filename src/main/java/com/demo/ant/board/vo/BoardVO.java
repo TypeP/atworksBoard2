@@ -3,6 +3,7 @@ package com.demo.ant.board.vo;
 public class BoardVO {
 
 	private int bdNum;
+	private int bdType;
 	private String bdTitle;
 	private String bdContent;
 	private String bdWriter;
@@ -22,6 +23,17 @@ public class BoardVO {
 	public void setBdNum(int bdNum) {
 		this.bdNum = bdNum;
 	}
+	
+	public int getBdType() {
+		return bdNum;
+	}
+
+
+
+	public void setBdType(int bdType) {
+		this.bdType = bdType;
+	}
+
 
 
 
@@ -111,9 +123,9 @@ public class BoardVO {
 
 	@Override
 	public String toString() {
-		return "BoardVO [bdNum=" + bdNum + ", bdTitle=" + bdTitle + ", bdContent=" + bdContent + ", bdWriter=" + bdWriter
+		return "BoardVO [bdNum=" + bdNum + ",bdType="+bdType+", bdTitle=" + bdTitle + ", bdContent=" + bdContent + ", bdWriter=" + bdWriter
 				+ ", bdRegdate=" + bdRegdate + ", bdModwriter=" + bdModwriter + ", bdModdate=" + bdModdate + ", bdCount="
-				+ bdCount + ", + getBdNum() = "+getBdNum()+", getBdTitle()="+ getBdTitle() + ", getBdContent()=" + getBdContent() 
+				+ bdCount + ", + getBdNum() = "+getBdNum()+",getBdType()="+getBdType()+", getBdTitle()="+ getBdTitle() + ", getBdContent()=" + getBdContent() 
 				+ ", getBdWriter()=" + getBdWriter() + ", getBdRegdate()="+ getBdRegdate() + ", getBdModwriter()=" + getBdModwriter() 
 				+ ", getBdModdate()=" + getBdModdate() + ", getBdCount()=" + getBdCount() + ", hashCode()="+ hashCode() + ", toString()=" 
 				+ super.toString() + "]";

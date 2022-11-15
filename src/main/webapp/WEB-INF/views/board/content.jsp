@@ -49,8 +49,38 @@
 				</tr>
 								
 			</table>
+			<br>
 			
-		
+			<table border="0" align="center">
+				<tr align="center">
+					<th align="left">&nbsp;작성자</th>
+					<th>댓글</th>
+					<th>작성일자</th>
+					<th align="right">삭제</th>
+				</tr>
+				<c:if test="${!empty list }">
+					<c:forEach items="${list}" var="vo1">
+					<tr align="center">
+					<td align="left">&nbsp;${vo1.rpId }</td>
+					<td>${vo1.rpContent}</td>
+					<td>${vo1.rpDate }</td>
+					<td align="right"><input type="button" value="삭제" onclick="location.href='/board/deleteReply?bdNum=${vo.bdNum}&rpNum=${vo1.rpNum}'"></td>
+					</tr>
+					
+					</c:forEach>
+				</c:if>
+			</table>
+			<form action="/board/insertReply" method="post">
+			<input type="hidden" name="bdNum" value="${vo.bdNum }">
+			<table border="0" align="center">
+				<tr>
+					<td width="10%"><input type="text" name="rpId" ></td>
+					<td width="110%"colspan="2"><input type="text" name="rpContent"></td>
+					<td align="right"><input type="submit" value="댓글달기"></td>
+				</tr>
+			</table>
+			</form>
+
 		</div>
 			
 		
@@ -59,5 +89,8 @@
 
 
 <%@ include file="/WEB-INF/views/include/footer.jsp" %>
+
+<script>
+</script>
 </body>
 </html>

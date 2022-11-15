@@ -28,7 +28,6 @@
 	<main class="main">
 		
 		<h2 align="center">atworks 게시판</h2>
-		<c:set var="list" value="${list}"/>
 		<div class="util_menu" style= 'white-space:nowrap;'>
 		<form action="/board/search"method="post">
 		<select name="field" class="field" >
@@ -42,44 +41,44 @@
 		</form>
 		</div>
 		<div align="center">
-		<table border="0" align="center">
-			<tr align="center">
-				<th>게시글번호</th>
-				<th>제목</th>
-				<th>작성일자</th>
-				<th>조회수</th>
-			</tr>
-			<c:if test="${empty list}">
-				<tr>
-					<td>작성된 게시물이 없습니다</td>
-				</tr>
-			</c:if>
-			
-			<c:if test="${!empty list}">
-				<c:forEach items="${list }" var="vo">
+			<table border="0" align="center">
 				<tr align="center">
-					<td>${vo.bdNum }</td>
-					<td><a href="/board/content?bdNum=${vo.bdNum}">${vo.bdTitle }</a></td>
-					<td>
-						<c:if test="${empty vo.bdModdate }">
-							${vo.bdRegdate}
-						</c:if>	
-						<c:if test="${!empty vo.bdModdate }">
-							${vo.bdModdate}
-						</c:if>	
-					</td>
-					<td>${vo.bdCount }</td>
-				</tr>	
-					
-				</c:forEach>
-			</c:if>
-				<tr>
-					<td colspan="4" align="right">
-						<input type="button" value="게시글작성" onclick="location.href='/board/writeBoard'">&nbsp;
-					</td>
+					<th>게시글번호</th>
+					<th>제목</th>
+					<th>작성일자</th>
+					<th>조회수</th>
 				</tr>
-			
-		</table>
+				<c:if test="${empty list}">
+					<tr>
+						<td>작성된 게시물이 없습니다</td>
+					</tr>
+				</c:if>
+				
+				<c:if test="${!empty list}">
+					<c:forEach items="${list }" var="vo">
+					<tr align="center">
+						<td>${vo.bdNum }</td>
+						<td><a href="/board/content?bdNum=${vo.bdNum}">${vo.bdTitle }</a></td>
+						<td>
+							<c:if test="${empty vo.bdModdate }">
+								${vo.bdRegdate}
+							</c:if>	
+							<c:if test="${!empty vo.bdModdate }">
+								${vo.bdModdate}
+							</c:if>	
+						</td>
+						<td>${vo.bdCount }</td>
+					</tr>	
+						
+					</c:forEach>
+				</c:if>
+					<tr>
+						<td colspan="4" align="right">
+							<input type="button" value="게시글작성" onclick="location.href='/board/writeBoard'">&nbsp;
+						</td>
+					</tr>
+				
+			</table>
 		</div>
 	</main>
 </section>

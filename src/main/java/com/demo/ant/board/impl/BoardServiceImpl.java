@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.demo.ant.board.dao.BoardMapperDao;
 import com.demo.ant.board.service.BoardService;
 import com.demo.ant.board.vo.BoardVO;
+import com.demo.ant.board.vo.ReplyVO;
 
 @Service("boardService")
 public class BoardServiceImpl implements BoardService{
@@ -54,6 +55,34 @@ public class BoardServiceImpl implements BoardService{
 		 return dao.searchBoard(param);
 	}
 	
+	@Override
+	public Map<String, Object> selectAjaxBoard() throws Exception{
+		Map<String, Object> param= new HashMap<String, Object>();
+		
+		List<BoardVO> list= dao.selectBoard();
+		param.put("list", list);
+		return param;
+		
+	}
+	@Override
+	public int countBoard(BoardVO vo) throws Exception{
+		return dao.countBoard(vo);
+	}
+	
+	@Override
+	public List<ReplyVO> indexReply(int bdNum)throws Exception{
+		return dao.indexReply(bdNum);
+	}
+	
+	@Override
+	public int insertReply(ReplyVO vo) throws Exception{
+		return dao.insertReply(vo);
+	}
+	
+	@Override
+	public int deleteReply(int rpNum)throws Exception{
+		return dao.deleteReply(rpNum);
+	}
 
 	
 }

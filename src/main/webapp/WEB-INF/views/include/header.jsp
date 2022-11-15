@@ -13,7 +13,8 @@
 		<nav>
 			<ul>
 				<li class="before_sign"><a href="/board/indexBoard">게시판</a></li>
-				<li class="before_sign"><a href="/board/ajaxBoard">ajax게시판</a></li>
+				<li class="before_sign"><a href="/ajax/indexAjaxBoard">ajax공지게시판</a></li>
+				<li class="before_sign"><a href="/gallery/indexGalleryBoard">갤러리게시판</a></li>
 			</ul>
 		</nav>
 		<div class="util_menu">

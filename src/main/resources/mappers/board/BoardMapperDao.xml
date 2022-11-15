@@ -14,6 +14,8 @@
 			, BD_COUNT		AS 'bdCount'
 		FROM atworks_board
 		WHERE 1=1
+		AND BD_TYPE=1
+		order by bd_num desc;
 	</select>
 	
 	
@@ -21,6 +23,7 @@
 	<insert id="insertBoard" parameterType="com.demo.ant.board.vo.BoardVO">
 		insert into atworks_board(
 			bd_num
+			,bd_type
 			,bd_title
 			,bd_content
 			,bd_writer
@@ -29,12 +32,30 @@
 		)
 		values(
 			(SELECT NEXTVAL(seq_board))
+			,1
 			,#{bdTitle}
 			,#{bdContent}
 			,#{bdWriter}
 			,now()
 			,0
 		)
+	</insert>
+	
+	<insert id="insertReply" parameterType="com.demo.ant.board.vo.ReplyVO">
+		insert into atworks_reply(
+			rp_num
+			,bd_num
+			,rp_id
+			,rp_content
+			,rp_date
+			)
+			values(
+				(SELECT NEXTVAL(seq_rep))
+				,#{bdNum}
+				,#{rpId}
+				,#{rpContent}
+				,now()
+			)
 	</insert>
 	
 	<select id="contentBoard" parameterType="int" resultType="com.demo.ant.board.vo.BoardVO">
@@ -50,9 +71,21 @@
 		FROM atworks_board
 		WHERE 1=1
 		AND BD_NUM = #{bdNum}
+		AND BD_TYPE= 1
 	
 	
 	</select>
+	
+	<update id="countBoard" parameterType="com.demo.ant.board.vo.BoardVO">
+		<selectKey resultType="int" keyProperty="bdCount" order="BEFORE">
+			select (bd_count)+1 from atworks_board where bd_num=#{bdNum}
+		</selectKey>
+		update atworks_board set
+			bd_count =#{bdCount}
+		where bd_type=1
+		and bd_num=#{bdNum}
+	
+	</update>
 	
 	<update id="modifyBoard" parameterType="com.demo.ant.board.vo.BoardVO">
 		
@@ -64,6 +97,7 @@
 		       ,BD_MODDATE=now()
 		where 1=1
 		AND BD_NUM= #{bdNum}
+		AND BD_TYPE=1
 				
 	
 	</update>
@@ -72,6 +106,22 @@
 		delete from atworks_board
 			where BD_NUM= #{bdNum}
 	</delete>
+	
+	<delete id="deleteReply">
+		delete from atworks_reply
+			where rp_num=#{rpNum}
+	</delete>
+	
+	<select id="indexReply" parameterType="int" resultType="com.demo.ant.board.vo.ReplyVO" >
+		SELECT
+			RP_NUM AS 'rpNum'
+			,RP_ID AS 'rpID'
+			,RP_CONTENT AS 'rpContent'
+			,RP_DATE AS 'rpDate'
+		from atworks_reply
+		where bd_num=#{bdNum}
+		order by rp_num desc	
+	</select>
 	
 	<select id="searchBoard" parameterType="String" resultType="com.demo.ant.board.vo.BoardVO">
 		SELECT 
@@ -84,22 +134,21 @@
 			, BD_MODDATE		AS 'bdModdate'
 			, BD_COUNT		AS 'bdCount'
 		FROM atworks_board
+
 		<choose>
-			<when test="field=='all'">
+			<when test="field!='all'">
+		WHERE 	${field} LIKE CONCAT('%', #{keyword}, '%')
+			AND BD_TYPE=1
+			</when>
+			<when test="field='all'">
 			
-		WHERE 	BD_TITLE LIKE CONCAT('%', #{keyword}, '%')
+		WHERE 1=1
+			AND BD_TYPE=1
+			OR BD_TITLE LIKE CONCAT('%', #{keyword}, '%')
 			OR BD_CONTENT LIKE CONCAT('%', #{keyword}, '%')
 			OR BD_WRITER LIKE CONCAT('%', #{keyword}, '%')
 			</when>
-			<otherwise>
-		WHERE 	${field} CONCAT('%', #{keyword}, '%')
-			</otherwise>
-			
 			</choose>
-			
-			
 	</select>
-	
-
 	
 </mapper>

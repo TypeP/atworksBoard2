@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.ant.gallery.dao.GalleryMapperDao">
+
+	<select id="getGalleryList" parameterType="map" resultType="com.demo.ant.gallery.vo.GalleryFileVO">
+		SELECT 
+			  a.BD_NUM 	AS	'bdNum'
+			, a.BD_TITLE 	AS	'bdTitle'
+			, a.BD_CONTENT	AS	'bdContent'
+			, a.BD_WRITER		AS	'bdWriter'
+			, a.BD_REGDATE		AS 'bdRegdate'
+			, a.BD_MODWRITER		AS 'bdModwriter'
+			, a.BD_MODDATE		AS 'bdModdate'
+			, a.BD_COUNT		AS 'bdCount'
+			, b.FILE_NUM AS 'fileNum'
+			, b.FILE_NAME AS 'fileName'
+			, b.SAVED_FILE_NAME AS 'savedFileName'
+			, b.FILE_SIZE AS 'fileSize'
+			
+		FROM atworks_board a join atworks_file b
+		on a.bd_num=b.bd_num and b.file_num = (select MIN(c.file_num)from atworks_file c where c.bd_num=a.bd_num)
+		<include refid="searchS"/>
+		order by bdNum desc
+		limit #{pagePerCnt} OFFSET #{offset} 
+	</select>
+	
+	<select id="getGalleryTotalCnt" parameterType="com.demo.ant.ajax.vo.SearchVO" resultType="int">
+	   SELECT
+	   		COUNT(*)
+	   		FROM atworks_board
+	   		<include refid="searchS"/>
+	 </select>  		
+	
+	
+	<sql id="searchS">
+		<where>		
+			<if test="searchType!=null or !searchType.equals('')">
+				<choose>
+					<when test="searchType!='all'">
+						${searchType} like CONCAT('%', #{keyword}, '%')
+						and bd_type=3
+					</when>
+					<when test="searchType='all'">
+						bd_title like CONCAT('%', #{keyword}, '%')
+						or bd_content like CONCAT('%', #{keyword}, '%')
+						or bd_writer like CONCAT('%', #{keyword}, '%')
+						and bd_type=3	
+					</when>
+							
+				</choose>
+
+			</if>
+		</where>
+	</sql>
+	<insert id="writeGalleryBoard" parameterType="com.demo.ant.gallery.vo.GalleryVO" useGeneratedKeys="true" keyProperty="bdNum" keyColumn="bd_num">
+		insert into atworks_board(
+			bd_num,
+			bd_type,
+			bd_title,
+			bd_content,
+			bd_writer,
+			bd_regdate,
+			bd_count
+	) values(
+		NEXTVAL(seq_board)
+		,3
+		,#{bdTitle}
+		,#{bdContent}
+		,#{bdWriter}
+		,now()
+		,0
+	)
+	<selectKey keyProperty="bdNum" keyColumn="bd_num" resultType="int" order="AFTER">
+		SELECT LASTVAL(seq_board) from dual
+	</selectKey>
+	
+	
+	</insert>
+	
+	<insert id ="insertAttachGallery" parameterType="hashMap">
+		insert into atworks_file(
+			file_num,
+			bd_num,
+			file_name,
+			saved_file_name,
+			file_size
+		) values
+			<foreach collection="list" separator="," item="it">
+				(
+				(select NEXTVAL(seq_attach))
+				,#{it.bd_num}
+				,#{it.file_name}
+				,#{it.saved_file_name}
+				,#{it.file_size}
+				)
+			</foreach>
+	
+	</insert>
+	
+	<select id="contentGalleryBoard" parameterType="int" resultType="com.demo.ant.gallery.vo.GalleryVO">
+		SELECT BD_NUM AS bdNum
+			   ,BD_TYPE AS bdType
+			   ,BD_TITLE AS bdTitle
+			   ,BD_CONTENT AS bdContent
+			   ,BD_WRITER AS bdWriter
+			   ,BD_REGDATE AS bdRegdate
+			   ,BD_MODWRITER AS bdModwriter
+			   ,BD_MODDATE AS bdModdate
+			   ,BD_COUNT AS bdCount
+		
+		FROM atworks_board
+		
+		WHERE bd_num=#{bdNum}
+			AND BD_TYPE=3;
+	
+	</select>
+	
+	<select id="getFileGallery" parameterType="int" resultType="com.demo.ant.gallery.vo.FileListVO">
+		SELECT   file_num AS fileNum
+		    	,file_name AS fileName
+				,saved_file_name AS savedFileName
+				,file_size AS fileSize
+		FROM atworks_file
+		WHERE bd_num=#{bdNum}
+	
+	</select>
+	<delete id="deleteGalleryAttach" parameterType="int">
+		delete from atworks_file
+			where bd_num=#{bdNum}
+	
+	</delete>
+	
+	<delete id="deleteGallery" parameterType="int">
+		delete from atworks_board
+			where bd_num=#{bdNum}
+	</delete>
+	
+	<update id="modifyGalleryBoard" parameterType="com.demo.ant.gallery.vo.GalleryVO">
+		update atworks_board set
+			bd_title=#{bdTitle},
+			bd_content=#{bdContent},
+			bd_modwriter=#{bdWriter},
+			bd_moddate= now()
+		where bd_num=#{bdNum}
+			and bd_Type=3;
+	
+	</update>
+	
+	
+	
+	
+</mapper>

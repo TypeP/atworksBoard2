@@ -11,6 +11,7 @@
            http://www.springframework.org/schema/mvc
            http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
 
+
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
@@ -19,9 +20,12 @@
             </list>
         </property>
     </bean>
+    
+
 
     <mvc:resources mapping="/css/**" 	location="/css/"/>
     <mvc:resources mapping="/js/**" 	location="/js/"/>
+    <mvc:resources mapping="/resources/**" 	location="/resources/"/>
 
     <context:component-scan base-package="com.demo.ant">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
